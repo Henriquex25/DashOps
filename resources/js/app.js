@@ -1,7 +1,8 @@
 import './bootstrap';
+import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.esm';
+import AlpineFloatingUI from "@awcodes/alpine-floating-ui";
+import collapse from '@alpinejs/collapse'
 
-import Alpine from 'alpinejs';
-
-window.Alpine = Alpine;
-
-Alpine.start();
+Alpine.plugin(AlpineFloatingUI);
+Alpine.plugin(collapse);
+Alpine.start()

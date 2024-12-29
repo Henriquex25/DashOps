@@ -22,9 +22,7 @@
 
 <body class="antialiased bg-[#2c313c]">
 
-    <livewire:navigation-bar />
-
-    <main class="pl-[20.4rem] w-full px-4 py-8 max-h-full overflow-y-auto text-gray-300 mx-auto md:px-6 lg:px-8 max-w-7xl">
+    <main>
         {{ $slot }}
     </main>
 

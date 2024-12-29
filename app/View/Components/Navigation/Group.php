@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Navigation;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class Navigation extends Component
+class Group extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class Navigation extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.navigation');
+        return view('components.navigation.group');
     }
 }
