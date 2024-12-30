@@ -28,6 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if (auth()->user()->selected_project_id) {
+            $request->session()->put('project', auth()->user()->selectedProject);
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -39,6 +43,8 @@ class AuthenticatedSessionController extends Controller
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
+
+        $request->session()->forget('project');
 
         $request->session()->regenerateToken();
 

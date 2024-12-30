@@ -1,5 +1,5 @@
 <div>
-    <div class="w-full h-full">
+    <div class="w-full h-full select-none">
         <div class="sticky top-0 z-20 overflow-x-clip w-full">
             <div class="w-full h-16 bg-[#21252b] flex flex-row">
 
@@ -27,7 +27,7 @@
 
                     {{-- User Modal Info --}}
                     <div
-                        x-float.placement.bottom-end.flip.teleport.offset="{ offset: 8}"
+                        x-float.placement.bottom-end.flip.teleport.offset="{ offset: 8, trap: true }"
                         class="absolute z-10 w-screen divide-y divide-gray-100 rounded-lg shadow-lg ring-1 transition divide-white/5 bg-[#21252b] ring-white/10 !max-w-[14rem] border border-white/5 text-gray-200 overflow-hidden"
                         x-transition:enter-start="opacity-0"
                         x-transition:leave-end="opacity-0"
@@ -69,15 +69,21 @@
                             x-transition:enter-start="opacity-0"
                             x-transition:enter-end="opacity-100"
                         >
+                            <li class="mb-2">
+                                <div class="dark bg-transparent">
+                                    {{ $this->form }}
+                                </div>
+                            </li>
+
                             <x-navigation.group>
                                 <x-navigation.item
                                     label="Dashboard" icon="heroicon-o-home" href="{{ route('dashboard') }}"
                                 />
                             </x-navigation.group>
 
-                            <x-navigation.group label="Settings">
+                            <x-navigation.group label="{{ __('General') }}">
                                 <x-navigation.item
-                                    label="Servers" icon="heroicon-o-home" href="{{ route('projects') }}"
+                                    label="{{ trans_choice('Projects', 2) }}" icon="heroicon-o-rectangle-stack" href="{{ route('projects') }}"
                                 />
                             </x-navigation.group>
                         </ul>
