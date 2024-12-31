@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Scopes\OwnerScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +16,6 @@ class Project extends Model
 
     protected $fillable = [
         'name',
-        'passphrase',
         'description',
         'logo',
         'owner_id',

@@ -1,4 +1,4 @@
-<div>
+<div @project::created.window="$wire.$refresh(); $wire.set('data.project', $event.detail.projectId, false);">
     <div class="w-full h-full select-none">
         <div class="sticky top-0 z-20 overflow-x-clip w-full">
             <div class="w-full h-16 bg-[#21252b] flex flex-row">

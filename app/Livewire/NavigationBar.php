@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Models\Project;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\RawJs;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Filament\Forms\Form;
 use Filament\Forms;
@@ -17,7 +19,7 @@ class NavigationBar extends Component implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill();
+        $this->form->fill(['project' => auth()->user()->selected_project_id]);
     }
 
     public function form(Form $form): Form
@@ -28,19 +30,16 @@ class NavigationBar extends Component implements HasForms
                     ->label('')
                     ->options(
                         fn(): array => Project::query()
-                            ->orderBy('name')
                             ->pluck('name', 'id')
                             ->toArray()
                     )
                     ->placeholder(__('Select a project...'))
                     ->preload()
-                    ->reactive()
-                    ->afterStateUpdated(function (string $project): void {
-                        dd($project);
-                    }),
+                    ->reactive(),
             ])
             ->statePath('data');
     }
+
 
     public function render()
     {

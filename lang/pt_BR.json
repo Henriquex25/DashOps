@@ -159,5 +159,10 @@
     "You may delete any of your existing tokens if they are no longer needed.": "Você deve deletar os tokens sem utilização.",
     "Your email address is unverified.": "Seu endereço de e-mail não foi verificado.",
     "Photo": "Foto",
-    "Projects": "Projetos"
+    "Project": "Projeto",
+    "project": "projeto",
+    "Projects": "Projetos",
+    "Create project": "Criar projeto",
+    "Description": "Descrição",
+    "Edit": "Editar"
 }

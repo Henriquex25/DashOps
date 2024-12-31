@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(User::class, 'owner_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->string('passphrase');
             $table->string('description')->nullable();
             $table->string('logo')->nullable();
             $table->timestamps();

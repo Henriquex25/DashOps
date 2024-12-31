@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Livewire\Dashboard;
-use App\Livewire\Projects;
+use App\Livewire\Project\IndexProject;
+use App\Livewire\Project\Project;
+use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,7 +19,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', Dashboard::class)
         ->name('dashboard');
 
-    Route::get('/projects', Projects::class)
+    Route::get('/projects', IndexProject::class)
         ->name('projects');
 });
 
