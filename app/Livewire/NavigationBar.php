@@ -28,6 +28,7 @@ class NavigationBar extends Component implements HasForms
             ->schema([
                 Forms\Components\Select::make('project')
                     ->label('')
+                    ->searchable()
                     ->options(
                         fn(): array => Project::query()
                             ->pluck('name', 'id')
@@ -35,7 +36,8 @@ class NavigationBar extends Component implements HasForms
                     )
                     ->placeholder(__('Select a project...'))
                     ->preload()
-                    ->reactive(),
+                    ->reactive()
+                    ->afterStateUpdated(fn($state) => auth()->user()->update(['selected_project_id' => $state])),
             ])
             ->statePath('data');
     }

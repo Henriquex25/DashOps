@@ -10,6 +10,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Filament\Tables\Actions;
 use Filament\Forms;
@@ -52,7 +53,30 @@ class IndexProject extends Component implements HasForms, HasTable
 
                     Actions\DeleteAction::make()
                         ->modalHeading(__('Delete') . ' ' . mb_strtolower(__('Project')))
-                        ->successNotificationTitle(__('Project deleted successfully') . '!'),
+                        ->successNotificationTitle(__('Project deleted successfully') . '!')
+                        ->action(function (Actions\DeleteAction $action, Project $record) {
+                            $loggedUser = auth()->user();
+
+                            DB::beginTransaction();
+
+                            if ($loggedUser->selected_project_id === $record->id) {
+                                $loggedUser->update(['selected_project_id' => null]);
+                            }
+
+                            $result = $record->delete();
+
+                            if (! $result) {
+                                $action->failure();
+                                DB::rollBack();
+
+                                return;
+                            }
+
+                            $this->dispatch('project::deleted', projectId: $record->id);
+
+                            $action->success();
+                            DB::commit();
+                        }),
                 ])
             ])
             ->bulkActions([
