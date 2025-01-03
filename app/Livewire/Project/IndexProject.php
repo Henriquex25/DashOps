@@ -3,7 +3,6 @@
 namespace App\Livewire\Project;
 
 use App\Models\Project;
-use Filament\Actions\EditAction;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables;
@@ -13,6 +12,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 use Filament\Tables\Actions;
+use Filament\Forms;
 
 class IndexProject extends Component implements HasForms, HasTable
 {
@@ -46,10 +46,13 @@ class IndexProject extends Component implements HasForms, HasTable
                     Actions\EditAction::make()
                         ->label(__('Edit'))
                         ->modalHeading(__('Edit') . ' ' . mb_strtolower(__('Project')))
-                        ->color('warning'),
+                        ->color('warning')
+                        ->form($this->getUpdateFormSchema())
+                        ->successNotificationTitle(__('Project updated successfully') . '!'),
 
                     Actions\DeleteAction::make()
-                        ->modalHeading(__('Delete') . ' ' . mb_strtolower(__('Project'))),
+                        ->modalHeading(__('Delete') . ' ' . mb_strtolower(__('Project')))
+                        ->successNotificationTitle(__('Project deleted successfully') . '!'),
                 ])
             ])
             ->bulkActions([
@@ -58,6 +61,24 @@ class IndexProject extends Component implements HasForms, HasTable
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->delete()),
             ]);
+    }
+
+    public function getUpdateFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('name')
+                ->label(__('Name'))
+                ->unique(ignoreRecord: true)
+                ->required(),
+
+            Forms\Components\TextInput::make('description')
+                ->label(__('Description')),
+
+            Forms\Components\FileUpload::make('logo')
+                ->label(__('Logo'))
+                ->image()
+                ->imageEditor(),
+        ];
     }
 
     public function render()

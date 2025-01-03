@@ -164,5 +164,8 @@
     "Projects": "Projetos",
     "Create project": "Criar projeto",
     "Description": "Descrição",
-    "Edit": "Editar"
+    "Edit": "Editar",
+    "Project created successfully": "Projeto criado com sucesso",
+    "Project updated successfully": "Projeto atualizado com sucesso",
+    "Project deleted successfully": "Projeto excluído com sucesso"
 }

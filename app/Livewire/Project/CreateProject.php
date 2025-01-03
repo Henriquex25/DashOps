@@ -46,7 +46,7 @@ class CreateProject extends Component implements HasForms, HasActions
 
                 Notification::make()
                     ->success()
-                    ->title('Projeto criado com sucesso!')
+                    ->title(__('Project created successfully') . '!')
                     ->send();
 
                 return $newProject;
