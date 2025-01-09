@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -54,5 +56,20 @@ class User extends Authenticatable
     public function selectedProject(): BelongsTo
     {
         return $this->belongsTo(Project::class, 'selected_project_id');
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
+
+    public function servers(): HasManyThrough
+    {
+        return $this->hasManyThrough(Server::class, Project::class);
+    }
+
+    public function hasSelectedProject(): bool
+    {
+        return $this->selected_project_id !== null;
     }
 }

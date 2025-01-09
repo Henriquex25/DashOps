@@ -167,5 +167,11 @@
     "Edit": "Editar",
     "Project created successfully": "Projeto criado com sucesso",
     "Project updated successfully": "Projeto atualizado com sucesso",
-    "Project deleted successfully": "Projeto excluído com sucesso"
+    "Project deleted successfully": "Projeto excluído com sucesso",
+    "Server created successfully": "Servidor criado com sucesso",
+    "Server": "Servidor",
+    "Servers": "Servidores",
+    "Port": "Porta",
+    "Username": "Usuário",
+    "Please select a project": "Por favor, selecione um projeto"
 }

@@ -15,6 +15,7 @@
         "filament/tables": "^3.2",
         "laravel/breeze": "^2.3",
         "laravel/framework": "^11.31",
+        "laravel/horizon": "^5.30",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.5"
     },

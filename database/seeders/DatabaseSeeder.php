@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Project;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,5 +21,12 @@ class DatabaseSeeder extends Seeder
             'name'  => 'Test User',
             'email' => 'dev@dev.com',
         ]);
+
+        $newProject = Project::create([
+            'owner_id' => 1,
+            'name'     => 'Project 1',
+        ]);
+
+        User::first()->update(['selected_project_id' => $newProject->id]);
     }
 }

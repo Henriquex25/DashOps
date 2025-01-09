@@ -3,13 +3,13 @@
 namespace App\Livewire;
 
 use App\Models\Project;
+use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Support\RawJs;
+use Filament\Forms\Form;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Filament\Forms\Form;
-use Filament\Forms;
 
 class NavigationBar extends Component implements HasForms
 {
@@ -17,9 +17,19 @@ class NavigationBar extends Component implements HasForms
 
     public ?array $data = [];
 
+    #[Locked]
+    public bool $hasSelectedProject = false;
+
     public function mount(): void
     {
         $this->form->fill(['project' => auth()->user()->selected_project_id]);
+
+        $this->checkIfHasSelectedProject();
+    }
+
+    protected function checkIfHasSelectedProject(): void
+    {
+        $this->hasSelectedProject = auth()->user()->hasSelectedProject();
     }
 
     public function form(Form $form): Form
@@ -37,9 +47,27 @@ class NavigationBar extends Component implements HasForms
                     ->placeholder(__('Select a project...'))
                     ->preload()
                     ->reactive()
-                    ->afterStateUpdated(fn($state) => auth()->user()->update(['selected_project_id' => $state])),
+                    ->afterStateUpdated(function ($state) {
+                        if (is_null($state)) {
+                            $this->hasSelectedProject = false;
+                        }
+
+                        auth()->user()->update(['selected_project_id' => $state]);
+
+                        $this->checkIfHasSelectedProject();
+                    }),
             ])
             ->statePath('data');
+    }
+
+    #[On('project::created')]
+    public function refresh(int $projectId): void
+    {
+        $this->form->fill(['project' => $projectId]);
+
+        auth()->user()->refresh();
+
+        $this->checkIfHasSelectedProject();
     }
 
 

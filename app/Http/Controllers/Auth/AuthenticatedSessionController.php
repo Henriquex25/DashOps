@@ -28,11 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if (auth()->user()->selected_project_id) {
-            $request->session()->put('project', auth()->user()->selectedProject);
-        }
-
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard.index', absolute: false));
     }
 
     /**
@@ -44,10 +40,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->invalidate();
 
-        $request->session()->forget('project');
-
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('login');
     }
 }

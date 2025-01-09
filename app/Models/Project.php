@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Models\Scopes\OwnerScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ScopedBy([OwnerScope::class])]
@@ -24,5 +24,10 @@ class Project extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function servers(): HasMany
+    {
+        return $this->hasMany(Server::class);
     }
 }

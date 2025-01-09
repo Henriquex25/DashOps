@@ -1,5 +1,5 @@
 <div
-    @project::created.window="$wire.$refresh(); $wire.set('data.project', $event.detail.projectId, false);"
+    {{-- @project::created.window="$wire.$refresh(); $wire.set('data.project', $event.detail.projectId, false);" --}}
     @project::deleted.window="$wire.set('data.project', null, false); $wire.$refresh();"
 >
     <div class="w-full h-full select-none">
@@ -8,7 +8,7 @@
 
                 {{-- Logo --}}
                 <div class="w-80 flex items-center px-6 justify-between">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('dashboard.index') }}">
                         <h2 class="text-primary-500 font-bold text-xl">DashOps</h2>
                     </a>
 
@@ -80,14 +80,22 @@
 
                             <x-navigation.group>
                                 <x-navigation.item
-                                    label="Dashboard" icon="heroicon-o-home" href="{{ route('dashboard') }}"
+                                    label="Dashboard" icon="heroicon-o-home" href="{{ route('dashboard.index') }}"
                                 />
                             </x-navigation.group>
 
                             <x-navigation.group label="{{ __('General') }}">
                                 <x-navigation.item
-                                    label="{{ trans_choice('Projects', 2) }}" icon="heroicon-o-rectangle-stack" href="{{ route('projects') }}"
+                                    label="{{ __('Projects') }}" icon="heroicon-o-rectangle-stack"
+                                    href="{{ route('projects.index') }}"
                                 />
+                                
+                                @if($hasSelectedProject)
+                                    <x-navigation.item
+                                        label="{{ __('Servers') }}" icon="heroicon-o-server-stack"
+                                        href="{{ route('servers.index') }}"
+                                    />
+                                @endif
                             </x-navigation.group>
                         </ul>
                     </li>

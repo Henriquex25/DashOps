@@ -6,21 +6,22 @@ use App\Models\Project;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Livewire\Component;
-use Filament\Forms;
 
 class CreateProject extends Component implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;
 
-    public function createPostAction(): Action
+    public function createProjectAction(): Action
     {
-        return Action::make('createPost')
+        return Action::make('createProject')
             ->label(__('Create project'))
+            ->modalSubmitActionLabel(__('Create'))
             ->form([
                 Forms\Components\TextInput::make('name')
                     ->label(__('Name'))
@@ -35,7 +36,7 @@ class CreateProject extends Component implements HasForms, HasActions
                     ->image()
                     ->imageEditor(),
             ])
-            ->action(function (array $data, Action $action): Project {
+            ->action(function (array $data): Project {
                 $data['owner_id'] = auth()->id();
 
                 $newProject = Project::create($data);

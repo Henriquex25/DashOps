@@ -1,5 +1,5 @@
 <div>
-    {{ $this->createProject }}
+    {{ $this->createServer }}
 
     <x-filament-actions::modals/>
 </div>
