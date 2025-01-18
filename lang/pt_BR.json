@@ -169,9 +169,17 @@
     "Project updated successfully": "Projeto atualizado com sucesso",
     "Project deleted successfully": "Projeto excluído com sucesso",
     "Server created successfully": "Servidor criado com sucesso",
+    "created successfully": "criado com sucesso",
+    "updated successfully": "atualizado com sucesso",
+    "deleted successfully": "excluído com sucesso",
+    "force deleted successfully": "excluído permanentemente com sucesso",
     "Server": "Servidor",
     "Servers": "Servidores",
     "Port": "Porta",
     "Username": "Usuário",
-    "Please select a project": "Por favor, selecione um projeto"
+    "Please select a project": "Por favor, selecione um projeto",
+    "Force delete": "Deletar permanente",
+    "Copy the public key and paste it on a new line in the server's ~/.ssh/authorized_keys file.": "Copie a chave pública e cole-a em uma nova linha no arquivo ~/.ssh/authorized_keys do servidor.",
+    "Copied": "Copiado",
+    "Public key": "Chave pública"
 }

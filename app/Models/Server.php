@@ -3,8 +3,7 @@
 namespace App\Models;
 
 use App\Models\Scopes\OwnerServerScope;
-use App\Observers\ServerObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use App\Service\SSH\SSH;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ScopedBy(OwnerServerScope::class)]
-#[ObservedBy([ServerObserver::class])]
 class Server extends Model
 {
     use SoftDeletes;
@@ -63,5 +61,17 @@ class Server extends Model
         }
 
         return $path;
+    }
+
+    public static function resolveIpHashHmacKey(string $ip): string
+    {
+        $key = auth()->user()->selected_project_id . '_' . config('app.hmac_secret');
+
+        return hash_hmac('sha256', $ip, $key);
+    }
+
+    public function ssh(): SSH
+    {
+
     }
 }

@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Server;
 
+use App\Jobs\GenerateSshKey;
 use App\Models\Server;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\CreateAction;
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -23,13 +25,14 @@ class CreateServer extends Component implements HasForms, HasActions
 
     public function createServerAction(): Action
     {
-        return Action::make('createServer')
+        return CreateAction::make('createServer')
             ->label(__("Create") . " " . strtolower(__("Server")))
             ->modalSubmitActionLabel(__('Create'))
             ->form([
                 Forms\Components\TextInput::make('name')
                     ->label(__('Name'))
-                    ->unique(table: 'servers', column: 'name', modifyRuleUsing: fn(Unique $rule) => $rule->where('project_id', auth()->user()->selected_project_id))
+                    ->unique(table: 'servers', column: 'name', modifyRuleUsing: fn(Unique $rule
+                    ) => $rule->where('project_id', auth()->user()->selected_project_id))
                     ->required(),
 
                 Forms\Components\Grid::make(3)
@@ -44,7 +47,7 @@ class CreateServer extends Component implements HasForms, HasActions
                                 fn(): Closure => function (string $attribute, $value, Closure $fail) {
                                     if (
                                         Server::query()
-                                            ->where('ip_hash', $this->resolveIpHashHmacKey($value))
+                                            ->where('ip_hash', Server::resolveIpHashHmacKey($value))
                                             ->where('project_id', auth()->user()->selected_project_id)
                                             ->exists()
                                     ) {
@@ -62,35 +65,37 @@ class CreateServer extends Component implements HasForms, HasActions
                             ->required(),
                     ])
             ])
+            ->createAnother(false)
             ->action(function (array $data): Server {
                 $selectedProjectId = auth()->user()->selected_project_id;
                 $keyFileName = "DashOps_{$selectedProjectId}_" . uniqid();
+                $ipHash = Server::resolveIpHashHmacKey($data['ip']);
 
                 $newServer = Server::create([
                     ...$data,
-                    'ip_hash'       => $this->resolveIpHashHmacKey($data['ip']),
+                    'ip_hash'       => $ipHash,
                     'project_id'    => $selectedProjectId,
                     'passphrase'    => Str::password(length: 12, symbols: false),
                     'key_file_name' => $keyFileName,
                 ]);
 
+                dispatch_sync(new GenerateSshKey(
+                    serverId   : $newServer->id,
+                    projectName: $ipHash,
+                    keyFileName: $keyFileName,
+                    keyPath    : $newServer->getKeyPath(),
+                ));
+
                 Notification::make()
-                    ->title(__('Server created successfully') . '!')
+                    ->title(sprintf('%s %s!', __('Server'), __('created successfully')))
                     ->success()
                     ->send();
 
-                $this->dispatch('server::created', serverId: $newServer);
+                $this->dispatch('server::created', serverId: $newServer->id);
 
                 return $newServer;
             });
 
-    }
-
-    protected function resolveIpHashHmacKey(string $ip): string
-    {
-        $key = auth()->user()->selected_project_id . '_' . config('app.hmac_secret');
-
-        return hash_hmac('sha256', $ip, $key);
     }
 
     public function render(): View

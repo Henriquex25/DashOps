@@ -23,6 +23,7 @@
         "@alpinejs/focus": "^3.14.8",
         "@alpinejs/mask": "^3.14.8",
         "@alpinejs/sort": "^3.14.8",
-        "@awcodes/alpine-floating-ui": "^3.6.3"
+        "@awcodes/alpine-floating-ui": "^3.6.3",
+        "@ryangjchandler/alpine-clipboard": "^2.3.0"
     }
 }
