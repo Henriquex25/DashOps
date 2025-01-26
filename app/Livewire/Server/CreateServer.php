@@ -14,7 +14,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
 use Livewire\Component;
 
@@ -75,7 +74,6 @@ class CreateServer extends Component implements HasForms, HasActions
                     ...$data,
                     'ip_hash'       => $ipHash,
                     'project_id'    => $selectedProjectId,
-                    'passphrase'    => Str::password(length: 12, symbols: false),
                     'key_file_name' => $keyFileName,
                 ]);
 

@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->string('ip_hash')->unique();
             $table->string('port');
             $table->string('username');
-            $table->string('passphrase');
             $table->string('key_file_name');
             $table->timestamps();
             $table->softDeletes();

@@ -30,7 +30,7 @@
 
                     <x-filament::icon-button
                         x-show="showingCopiedPublicKeyMessage"
-                        icon="heroicon-m-clipboard"
+                        icon="heroicon-o-check-circle"
                         class="cursor-pointer p-2 !text-primary-500 transition duration-300"
                         x-on:click.stop=""
                     />

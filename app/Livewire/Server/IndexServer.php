@@ -35,7 +35,7 @@ class IndexServer extends Component implements HasForms, HasTable
         $keyFileName = $server->key_file_name;
         $keyPath = $server->getKeyPath();
 
-        $this->publicKeyContent = file_get_contents($keyPath . $keyFileName);
+        $this->publicKeyContent = file_get_contents($keyPath . $keyFileName . '.pub');
 
         $this->dispatch('open-modal', id: 'open-public-key-modal');
     }
@@ -85,11 +85,19 @@ class IndexServer extends Component implements HasForms, HasTable
 
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('Status'))
-                //->formatStateUsing(function (Server $record) {
-                //    $result = $record->ssh()->ping();
-                //
-                //    return $result ? __('Online') : __('Offline');
-                //}),
+                    ->badge()
+                    //->color(fn(string $state): string => match ($state) {
+                    //    'Online' => 'success',
+                    //    'Offline' => 'danger',
+                    //})
+                    ->color(function (string $state): string {
+                        dd($state);
+                    })
+                    ->formatStateUsing(function (Server $record) {
+                        $result = $record->ssh()->ping();
+                        ds($result);
+                        return $result ? __('Online') : __('Offline');
+                    }),
             ])
             ->filters([
                 // ...

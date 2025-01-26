@@ -2,27 +2,72 @@
 
 namespace App\Service\SSH;
 
+use App\Models\Scopes\OwnerServerScope;
 use App\Models\Server;
-use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Net\SSH2;
 
 class SSH
 {
-    public function __construct(protected Server $server)
-    {
-        //
+    protected SSH2 $ssh;
+
+    protected Carbon $ttl;
+
+    public function __construct(
+        protected Server $server
+    ) {
+        $this->ttl = now()->addMinutes(30);
+
+        $this->connect();
     }
 
-    public function ping(): bool
+    protected function connect(): void
     {
-        $command = sprintf('ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 -i %s -p %d %s@%s "echo connection_successful"',
-            escapeshellarg($this->server->key_file_name),
-            $this->server->port,
-            escapeshellarg($this->server->username),
-            escapeshellarg($this->server->ip)
+        $this->ssh = Cache::remember(
+            key     : $this->getCacheKey(),
+            ttl     : $this->ttl,
+            callback: function () {
+                $ssh = new SSH2($this->server->ip, $this->server->port);
+                $projectName = $this->server->project?->name ?? Server::withoutGlobalScope(OwnerServerScope::class)
+                    ->findOrFail($this->server->project_id);
+                $fullKeyPath = $this->server->getKeyPath(projectName: $projectName) . $this->server->key_file_name;
+                $privateKey = PublicKeyLoader::load(file_get_contents($fullKeyPath));
+
+                if (!$ssh->login($this->server->username, $privateKey)) {
+                    throw new \Exception("SSH authentication failed");
+                }
+
+                return $ssh;
+            }
         );
+    }
 
-        $result = Process::run($command);
+    protected function getCacheKey(): string
+    {
+        ds("ssh_connection_server_" . $this->server->id);
+        return "ssh_connection_server_" . $this->server->id;
+    }
 
-        return $result->successful() && str_contains($result->output(), 'connection_successful');
+    public function exec(string $command): string|bool
+    {
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
+        return $this->ssh->exec($command);
+    }
+
+    public function isConnected(): bool
+    {
+        return isset($this->ssh) && $this->ssh->isConnected();
+    }
+
+    public function disconnect()
+    {
+        if (isset($this->ssh)) {
+            $this->ssh->disconnect();
+        }
     }
 }

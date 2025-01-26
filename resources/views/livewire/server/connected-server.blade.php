@@ -1,0 +1,3 @@
+<div>
+    Saida: {{ $output }}
+</div>

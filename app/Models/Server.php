@@ -23,15 +23,13 @@ class Server extends Model
         'ip_hash',
         'port',
         'username',
-        'passphrase',
         'key_file_name',
     ];
 
     protected $casts = [
-        'ip'         => 'encrypted',
-        'port'       => 'encrypted',
-        'username'   => 'encrypted',
-        'passphrase' => 'encrypted',
+        'ip'       => 'encrypted',
+        'port'     => 'encrypted',
+        'username' => 'encrypted',
     ];
 
     public function project(): BelongsTo
@@ -72,6 +70,6 @@ class Server extends Model
 
     public function ssh(): SSH
     {
-
+        return new SSH($this);
     }
 }

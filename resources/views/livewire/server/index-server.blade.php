@@ -1,6 +1,7 @@
 <div x-data="indexServer">
     <x-section>
         <x-header :title="__('Servers')">
+            <livewire:server.connect-server/>
             <livewire:server.create-server @server::created="$refresh"/>
         </x-header>
     </x-section>

@@ -24,3 +24,4 @@ yarn-error.log
 .php-cs-fixer.cache
 _ide_helper*
 laradumps.yaml
+venv/

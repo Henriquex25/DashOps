@@ -21,7 +21,6 @@ class ServerFactory extends Factory
             'ip_hash'       => uniqid(),
             'port'          => 22,
             'username'      => strtolower($this->faker->firstName()),
-            'passphrase'    => uniqid(),
             'key_file_name' => $this->faker->word(),
         ];
     }
