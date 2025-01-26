@@ -89,7 +89,7 @@
                                     label="{{ __('Projects') }}" icon="heroicon-o-rectangle-stack"
                                     href="{{ route('projects.index') }}"
                                 />
-                                
+
                                 @if($hasSelectedProject)
                                     <x-navigation.item
                                         label="{{ __('Servers') }}" icon="heroicon-o-server-stack"

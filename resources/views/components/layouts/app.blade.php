@@ -24,8 +24,12 @@
 
     <livewire:navigation-bar />
 
-    <main class="pl-[20.4rem] w-full px-4 max-h-full overflow-y-auto text-gray-300 mx-auto md:px-6 lg:px-8 max-w-7xl">
-        {{ $slot }}
+    <main class="w-full max-h-full text-gray-300">
+        <div class="pl-80 w-full overflow-y-auto">
+            <div class="mx-auto md:px-6 lg:px-8 max-w-7xl">
+                {{ $slot }}
+            </div>
+        </div>
     </main>
 
     @livewireScriptConfig

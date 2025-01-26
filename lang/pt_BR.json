@@ -182,5 +182,6 @@
     "Copy the public key and paste it on a new line in the server's ~/.ssh/authorized_keys file.": "Copie a chave pública e cole-a em uma nova linha no arquivo ~/.ssh/authorized_keys do servidor.",
     "Copied": "Copiado",
     "Public key": "Chave pública",
-    "Connect": "Conectar"
+    "Connect": "Conectar",
+    "Connection failed": "Conexão falhou"
 }

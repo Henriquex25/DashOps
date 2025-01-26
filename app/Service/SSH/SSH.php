@@ -2,72 +2,125 @@
 
 namespace App\Service\SSH;
 
+use App\Enums\SSHServerCast;
 use App\Models\Scopes\OwnerServerScope;
 use App\Models\Server;
+use Illuminate\Http\Client\PendingRequest as Client;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use phpseclib3\Crypt\PublicKeyLoader;
-use phpseclib3\Net\SSH2;
+use function Pest\Laravel\withHeader;
 
 class SSH
 {
-    protected SSH2 $ssh;
+    protected Client $client;
 
     protected Carbon $ttl;
+
+    protected string $endpoint = "";
+
+    protected array $body = [];
+
+    protected string $method = "post";
 
     public function __construct(
         protected Server $server
     ) {
         $this->ttl = now()->addMinutes(30);
 
-        $this->connect();
+        $this->client = new Client();
+
+        $this->configureClient();
     }
 
-    protected function connect(): void
+    protected function configureClient(): void
     {
-        $this->ssh = Cache::remember(
-            key     : $this->getCacheKey(),
-            ttl     : $this->ttl,
-            callback: function () {
-                $ssh = new SSH2($this->server->ip, $this->server->port);
-                $projectName = $this->server->project?->name ?? Server::withoutGlobalScope(OwnerServerScope::class)
-                    ->findOrFail($this->server->project_id);
-                $fullKeyPath = $this->server->getKeyPath(projectName: $projectName) . $this->server->key_file_name;
-                $privateKey = PublicKeyLoader::load(file_get_contents($fullKeyPath));
+        $sshServerHost = config('services.ssh_server.host');
+        $sshServerPort = config('services.ssh_server.port');
 
-                if (!$ssh->login($this->server->username, $privateKey)) {
-                    throw new \Exception("SSH authentication failed");
-                }
-
-                return $ssh;
-            }
-        );
+        $this->client
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+            ])
+            ->baseUrl("http://{$sshServerHost}:{$sshServerPort}");
     }
 
-    protected function getCacheKey(): string
+    protected function logsEnabled(): bool
     {
-        ds("ssh_connection_server_" . $this->server->id);
-        return "ssh_connection_server_" . $this->server->id;
+        return config('services.ssh_server.logs');
     }
 
-    public function exec(string $command): string|bool
+    protected function getLogData(Response $response): array
     {
-        if (!$this->isConnected()) {
-            $this->connect();
+        return [
+            'method'   => $this->method,
+            'endpoint' => $this->endpoint,
+            'body'     => $this->body,
+            'response' => $response->json(),
+        ];
+    }
+
+    public function connect(): self
+    {
+        $this->endpoint = '/connect';
+        $this->method = 'post';
+        $this->body = [
+            'server_id'        => $this->server->id,
+            'host'             => $this->server->host,
+            'username'         => $this->server->username,
+            'private_key_path' => $this->server->getKeyPath($this->server->key_file_name, $this->server->project->name),
+        ];
+
+        return $this;
+    }
+
+
+    public function command(string $command): self
+    {
+        $this->endpoint = '/command';
+        $this->method = 'post';
+        $this->body = [
+            'server_id' => $this->server->id,
+            'command'   => $command,
+        ];
+
+        return $this;
+    }
+
+
+    public function disconnect(): self
+    {
+        $this->endpoint = '/disconnect';
+        $this->method = 'post';
+        $this->body = [
+            'server_id' => $this->server->id,
+        ];
+
+        return $this;
+    }
+
+    public function run(SSHServerCast $cast = SSHServerCast::Collection): array|Collection
+    {
+        $response = $this->client
+            ->{$this->method}($this->endpoint, $this->body);
+
+        if ($this->logsEnabled()) {
+            logger()
+                ->channel('ssh_server')
+                ->info('SSH Server', $this->getLogData($response));
         }
 
-        return $this->ssh->exec($command);
-    }
-
-    public function isConnected(): bool
-    {
-        return isset($this->ssh) && $this->ssh->isConnected();
-    }
-
-    public function disconnect()
-    {
-        if (isset($this->ssh)) {
-            $this->ssh->disconnect();
+        if ($response->collect()->has('error')) {
+            logger()
+                ->channel('ssh_server')
+                ->error('SSH Server', $this->getLogData($response));
         }
+
+        return match ($cast) {
+            SSHServerCast::Array => $response->json(),
+            SSHServerCast::Collection => $response->collect(),
+            SSHServerCast::Response => $response,
+        };
     }
 }
