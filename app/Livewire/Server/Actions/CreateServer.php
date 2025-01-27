@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Server;
+namespace App\Livewire\Server\Actions;
 
 use App\Jobs\GenerateSshKey;
 use App\Models\Server;
@@ -30,7 +30,8 @@ class CreateServer extends Component implements HasForms, HasActions
             ->form([
                 Forms\Components\TextInput::make('name')
                     ->label(__('Name'))
-                    ->unique(table: 'servers', column: 'name', modifyRuleUsing: fn(Unique $rule
+                    ->unique(table: 'servers', column: 'name', modifyRuleUsing: fn (
+                        Unique $rule
                     ) => $rule->where('project_id', auth()->user()->selected_project_id))
                     ->required(),
 
@@ -43,7 +44,7 @@ class CreateServer extends Component implements HasForms, HasActions
                         Forms\Components\TextInput::make('ip')
                             ->ipv4()
                             ->rules([
-                                fn(): Closure => function (string $attribute, $value, Closure $fail) {
+                                fn (): Closure => function (string $attribute, $value, Closure $fail) {
                                     if (
                                         Server::query()
                                             ->where('ip_hash', Server::resolveIpHashHmacKey($value))
@@ -67,8 +68,8 @@ class CreateServer extends Component implements HasForms, HasActions
             ->createAnother(false)
             ->action(function (array $data): Server {
                 $selectedProjectId = auth()->user()->selected_project_id;
-                $keyFileName = "DashOps_{$selectedProjectId}_" . uniqid();
-                $ipHash = Server::resolveIpHashHmacKey($data['ip']);
+                $keyFileName       = "DashOps_{$selectedProjectId}_" . uniqid();
+                $ipHash            = Server::resolveIpHashHmacKey($data['ip']);
 
                 $newServer = Server::create([
                     ...$data,
@@ -93,11 +94,10 @@ class CreateServer extends Component implements HasForms, HasActions
 
                 return $newServer;
             });
-
     }
 
     public function render(): View
     {
-        return view('livewire.server.create-server');
+        return view('livewire.server.actions.create-server');
     }
 }

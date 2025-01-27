@@ -15,9 +15,17 @@ class ConnectedServer extends Component
 
     public bool $isConnected = false;
 
+    public string $command = '';
+
+    #[Locked]
+    public string $output     = '';
+    public string $erroOutput = '';
+
     public function mount(Server $server): void
     {
         $this->server = $server;
+
+        $this->checkConnection();
     }
 
     public function checkConnection(): void
@@ -28,6 +36,19 @@ class ConnectedServer extends Component
             ->run();
 
         $this->isConnected = $response->get('status') === SSHServerResponse::Success->value;
+    }
+
+    public function runCommand(): void
+    {
+        $response = $this->server
+            ->ssh()
+            ->command($this->command)
+            ->run();
+
+        if ($response->get('status') === SSHServerResponse::Success->value) {
+            $this->output     = $response->get('output');
+            $this->erroOutput = $response->get('error');
+        }
     }
 
     public function render(): View

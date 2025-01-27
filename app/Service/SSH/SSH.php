@@ -3,14 +3,11 @@
 namespace App\Service\SSH;
 
 use App\Enums\SSHServerCast;
-use App\Models\Scopes\OwnerServerScope;
 use App\Models\Server;
 use Illuminate\Http\Client\PendingRequest as Client;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
-use function Pest\Laravel\withHeader;
 
 class SSH
 {
@@ -43,12 +40,12 @@ class SSH
             ->withHeaders([
                 'Content-Type' => 'application/json',
             ])
-            ->baseUrl("http://{$sshServerHost}:{$sshServerPort}");
+            ->baseUrl("{$sshServerHost}:{$sshServerPort}");
     }
 
     protected function logsEnabled(): bool
     {
-        return config('services.ssh_server.logs');
+        return config('services.ssh_server.logs_enabled');
     }
 
     protected function getLogData(Response $response): array
@@ -61,26 +58,33 @@ class SSH
         ];
     }
 
+    protected function resolveKeyFilePath(): string
+    {
+        $path     = $this->server->getKeyPath($this->server->key_file_name, $this->server->project->name);
+        $basePath = base_path() . '/';
+
+        return str_replace($basePath, '', $path);
+    }
+
     public function connect(): self
     {
         $this->endpoint = '/connect';
-        $this->method = 'post';
-        $this->body = [
+        $this->method   = 'post';
+        $this->body     = [
             'server_id'        => $this->server->id,
-            'host'             => $this->server->host,
+            'host'             => $this->server->ip,
             'username'         => $this->server->username,
-            'private_key_path' => $this->server->getKeyPath($this->server->key_file_name, $this->server->project->name),
+            'private_key_path' => $this->resolveKeyFilePath(),
         ];
 
         return $this;
     }
 
-
     public function command(string $command): self
     {
         $this->endpoint = '/command';
-        $this->method = 'post';
-        $this->body = [
+        $this->method   = 'post';
+        $this->body     = [
             'server_id' => $this->server->id,
             'command'   => $command,
         ];
@@ -88,12 +92,22 @@ class SSH
         return $this;
     }
 
+    public function checkConnection(): self
+    {
+        $this->endpoint = '/check_connection';
+        $this->method   = 'post';
+        $this->body     = [
+            'server_id' => $this->server->id,
+        ];
+
+        return $this;
+    }
 
     public function disconnect(): self
     {
         $this->endpoint = '/disconnect';
-        $this->method = 'post';
-        $this->body = [
+        $this->method   = 'post';
+        $this->body     = [
             'server_id' => $this->server->id,
         ];
 
@@ -118,9 +132,9 @@ class SSH
         }
 
         return match ($cast) {
-            SSHServerCast::Array => $response->json(),
+            SSHServerCast::Array      => $response->json(),
             SSHServerCast::Collection => $response->collect(),
-            SSHServerCast::Response => $response,
+            SSHServerCast::Response   => $response,
         };
     }
 }

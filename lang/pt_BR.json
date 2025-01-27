@@ -183,5 +183,9 @@
     "Copied": "Copiado",
     "Public key": "Chave pública",
     "Connect": "Conectar",
-    "Connection failed": "Conexão falhou"
+    "Connection failed": "A conexão falhou",
+    "Disconnect failed": "Falha ao desconectar",
+    "Connected": "Conectado",
+    "Disconnect": "Desconectar",
+    "Disconnected": "Desconectado"
 }

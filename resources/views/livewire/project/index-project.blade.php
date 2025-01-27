@@ -1,9 +1,9 @@
 <div>
     <x-section>
         <x-header :title="__('Projects')">
-            <div>
+            <x-header.actions>
                 <livewire:project.create-project @project::created="$refresh" />
-            </div>
+            </x-header.actions>
         </x-header>
     </x-section>
 

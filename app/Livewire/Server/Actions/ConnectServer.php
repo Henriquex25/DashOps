@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Server;
+namespace App\Livewire\Server\Actions;
 
 use App\Models\Server;
 use Filament\Actions\Action;
@@ -27,7 +27,7 @@ class ConnectServer extends Component implements HasForms, HasActions
             ->form([
                 Forms\Components\Select::make('serverId')
                     ->label(__("Server"))
-                    ->options(fn() => Server::pluck('name', 'id')->toArray())
+                    ->options(fn () => Server::pluck('name', 'id')->toArray())
                     ->searchable()
                     ->required()
             ])
@@ -54,6 +54,6 @@ class ConnectServer extends Component implements HasForms, HasActions
 
     public function render(): View
     {
-        return view('livewire.server.connect-server');
+        return view('livewire.server.actions.connect-server');
     }
 }

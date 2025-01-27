@@ -70,6 +70,29 @@ def connect_to_server():
                 'message': str(e)
             }), 500
 
+@app.route('/check_connection', methods=['POST'])
+def check_connection():
+    server_id = request.json.get('server_id')
+
+    if not server_id:
+        return jsonify({
+            'status': ERROR_STATUS,
+            'message': 'server_id is required',
+        }), 400
+
+    with lock:
+        if not server_id in ssh_connections or not test_ssh_connection(ssh_connections[server_id]):
+            return jsonify({
+                'status': SUCCESS_STATUS,
+                'message': 'Connection is not active',
+                'is_connected': False
+            }), 404
+
+        return jsonify({
+            'status': SUCCESS_STATUS,
+            'message': 'Connection is active',
+            'is_connected': True
+        }), 200
 
 @app.route('/command', methods=['POST'])
 def execute_command():
@@ -144,4 +167,4 @@ def close_connection():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8000)

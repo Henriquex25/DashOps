@@ -1,14 +1,16 @@
 <div x-data="indexServer">
     <x-section>
         <x-header :title="__('Servers')">
-            <livewire:server.connect-server/>
-            <livewire:server.create-server @server::created="$refresh"/>
+            <x-header.actions>
+                <livewire:server.actions.connect-server/>
+                <livewire:server.actions.create-server @server::created="$refresh"/>
+            </x-header.actions>
         </x-header>
     </x-section>
 
     {{ $this->table }}
 
-    @include('livewire.server.show-public-key-modal')
+    @include('livewire.server.actions.show-public-key-modal')
 </div>
 
 @script
