@@ -23,7 +23,7 @@
             </button>
         </div>
         <span>Saída: </span>
-        <textarea wire:model="output" class="text-black"></textarea>
-        <textarea wire:model="erroOutput" class="mt-5 text-red-500"></textarea>
+        <textarea wire:model="output" class="text-black" rows="10"></textarea>
+        <textarea wire:model="erroOutput" class="mt-5 text-red-500" rows="5"></textarea>
     </div>
 </div>

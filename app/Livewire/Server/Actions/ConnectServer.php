@@ -48,6 +48,11 @@ class ConnectServer extends Component implements HasForms, HasActions
                     return;
                 }
 
+                Notification::make()
+                    ->success()
+                    ->title(__("Connected successfully"))
+                    ->send();
+
                 $this->redirectRoute('servers.connected', ['server' => $data['serverId']]);
             });
     }

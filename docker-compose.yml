@@ -26,16 +26,17 @@ services:
             - mysql
             - redis
             - mailpit
-    python-server:
+    ssh-server:
         build:
-          context: .
-          dockerfile: ./docker/python_server/Dockerfile
-        command: ["python", "/app/ssh_server.py"]
+          context: ./ssh_server
+          dockerfile: Dockerfile
+        command: ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "ssh_server:app"]
         ports:
             - '8000:8000'
         volumes:
-          - ./storage/logs:/app/storage/logs
-          - ./storage/app/private/ssh_keys:/app/storage/app/private/ssh_keys
+          - './ssh_server:/app'
+          - './storage/logs:/app/storage/logs'
+          - './storage/app/private/ssh_keys:/app/storage/app/private/ssh_keys'
         environment:
             LOG_PATH: '/app/storage/logs/ssh_server.log'
         networks:

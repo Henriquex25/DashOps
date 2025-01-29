@@ -36,8 +36,9 @@ return [
     ],
 
     'ssh_server' => [
+        'token'        => env('SSH_SERVER_TOKEN'),
         'logs_enabled' => env('SSH_SERVER_LOGS_ENABLED', false),
-        'host' => env('SSH_SERVER_HOST'),
-        'port' => env('SSH_SERVER_PORT'),
+        'host'         => env('SSH_SERVER_HOST'),
+        'port'         => env('SSH_SERVER_PORT'),
     ],
 ];

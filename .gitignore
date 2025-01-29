@@ -25,6 +25,5 @@ yarn-error.log
 _ide_helper*
 laradumps.yaml
 venv/
-/docker/*
-!/docker/python_server/
-!/docker/python_server/**
+/docker
+/ssh_server/__pycache__
