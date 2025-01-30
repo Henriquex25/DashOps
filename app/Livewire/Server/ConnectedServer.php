@@ -2,9 +2,12 @@
 
 namespace App\Livewire\Server;
 
+use App\Enums\SSHServerCast;
 use App\Enums\SSHServerResponse;
 use App\Models\Server;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -16,10 +19,6 @@ class ConnectedServer extends Component
     public bool $isConnected = false;
 
     public string $command = '';
-
-    #[Locked]
-    public string $output     = '';
-    public string $erroOutput = '';
 
     public function mount(Server $server): void
     {
@@ -38,17 +37,12 @@ class ConnectedServer extends Component
         $this->isConnected = $response->get('status') === SSHServerResponse::Success->value;
     }
 
-    public function runCommand(): void
+    protected function runCommand(string $command, SSHServerCast $cast = SSHServerCast::Collection): Collection | array | Response
     {
-        $response = $this->server
+        return $this->server
             ->ssh()
-            ->command($this->command)
-            ->run();
-
-        if ($response->get('status') === SSHServerResponse::Success->value) {
-            $this->output     = $response->get('output');
-            $this->erroOutput = $response->get('error');
-        }
+            ->command($command)
+            ->run($cast);
     }
 
     public function render(): View

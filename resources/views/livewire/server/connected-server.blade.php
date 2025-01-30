@@ -15,15 +15,7 @@
         </x-header>
     </x-section>
 
-    <div class="flex flex-col">
-        <div>
-            <input type="text" wire:model="command" class="text-black" />
-            <button wire:click='runCommand'>
-                Executar comando
-            </button>
-        </div>
-        <span>Saída: </span>
-        <textarea wire:model="output" class="text-black" rows="10"></textarea>
-        <textarea wire:model="erroOutput" class="mt-5 text-red-500" rows="5"></textarea>
-    </div>
+    <livewire:server.stats :server="$server" />
+
+    <livewire:server.list-services :server="$server" />
 </div>

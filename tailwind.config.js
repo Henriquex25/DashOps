@@ -12,6 +12,7 @@ export default {
         "./resources/views/**/*.blade.php",
         "./resources/**/*.js",
         "./app/Filament/**/*.php",
+        "./app/View/**/*.php",
     ],
 
     theme: {
@@ -21,6 +22,9 @@ export default {
             },
             colors: {
                 primary: colors.sky,
+            },
+            boxShadow: {
+                smooth: "0px 1px 5px rgba(0, 0, 0, 0.13)",
             },
         },
     },

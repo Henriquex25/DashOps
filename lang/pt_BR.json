@@ -188,5 +188,9 @@
     "Disconnect failed": "Falha ao desconectar",
     "Connected": "Conectado",
     "Disconnect": "Desconectar",
-    "Disconnected": "Desconectado"
+    "Disconnected": "Desconectado",
+    "In use": "Em uso",
+    "Memory": "Memória",
+    "Storage": "Armazenamento",
+    "Uptime": "Tempo de atividade"
 }
